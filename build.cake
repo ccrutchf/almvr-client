@@ -81,6 +81,9 @@ Task("Build-Unity")
 
 	var outPath = System.IO.Path.GetFullPath((string)unityBuildDir) + "\\AlmVR.exe";
 	Information($"Unity Out Path: {outPath}");
+
+	var logPath = System.IO.Path.GetFullPath(".\\unity.log");
+	Information($"Unity Log Path: {logPath}");
 	
 	var settings = new ProcessSettings
 	{
@@ -90,7 +93,7 @@ Task("Build-Unity")
 			$"-projectpath \"{projectPath}\" " +
 			$"-buildWindows64Player \"{outPath}\" " +
 			"-nographics " +
-			@"-log .\unity.log " + 
+			$"-log \"{logPath}\" " + 
 			$"-username {unityEmail} " +
 			$"-password {unityPassword}",
 
@@ -107,7 +110,7 @@ Task("Build-Unity")
 		out redirectedErrorOutput
 	);
 
-	Information(FileReadText("./unity.log"));
+	Information(FileReadText(logPath));
 
 	foreach (var line in redirectedStandardOutput)
 	{
