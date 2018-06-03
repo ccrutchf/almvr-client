@@ -18,7 +18,7 @@ dynamic version;
 
 // Define directories.
 var clientBuildDir = Directory("./src/client/build") + Directory(configuration);
-var unityBuildDir = Directory("./build");
+var unityBuildDir = Directory("./build") + Directory(configuration);
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -29,6 +29,9 @@ Task("Clean")
 {
 	CleanDirectory(clientBuildDir);
     CleanDirectory(unityBuildDir);
+
+	if (FileExists("./almvr.zip"))
+		DeleteFile("./almvr.zip");
 });
 
 Task("Git-Versioning")
@@ -65,27 +68,27 @@ Task("Build-Unity")
 	.Does(() =>
 {
 	var unityEditorLocation = EnvironmentVariable("UNITY_EDITOR_LOCATION") ?? @"C:\Program Files\Unity\Editor\Unity.exe";
-	
 	Information($"Unity Editor Location: {unityEditorLocation}");
+
+	var projectPath = System.IO.Path.GetFullPath("./src/headset");
+	Information($"Unity Project Path: {projectPath}");
+
+	var outPath = System.IO.Path.GetFullPath((string)unityBuildDir) + "\\AlmVR.exe";
+	Information($"Unity Out Path: {outPath}");
 	
-	/*// Presuming the build.cake file is within the Unity3D project folder.
-	var projectPath = System.IO.Path.GetFullPath("./src/AlmVR.Headset");
-	
-	// The location we want the build application to go
-	var outputPath = System.IO.Path.Combine(projectPath, "Build", "x64", "alm-vr.exe");
-	
-	// Create our build options.
-	var options = new Unity3DBuildOptions()
-	{
-		Platform = Unity3DBuildPlatform.StandaloneWindows64,
-		OutputPath = outputPath,
-		UnityEditorLocation = unityEditorLocation,
-		ForceScriptInstall = true,
-		BuildVersion = "1.0.0"
-	};
-	
-	// Perform the Unity3d build.
-	BuildUnity3DProject(projectPath, options);*/
+	StartProcess(unityEditorLocation, 
+		"-quit " +
+		"-batchmode " + 
+		$"-projectpath \"{projectPath}\" " +
+		$"-buildWindows64Player \"{outPath}\" "
+	);
+});
+
+Task("Package")
+	.IsDependentOn("Build-Unity")
+	.Does(() =>
+{
+	Zip(unityBuildDir, "./almvr.zip");
 });
 
 //////////////////////////////////////////////////////////////////////
@@ -93,7 +96,7 @@ Task("Build-Unity")
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Build-Unity");
+    .IsDependentOn("Package");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
