@@ -94,7 +94,7 @@ Task("Build-Unity")
 		$"-buildWindows64Player \"{outPath}\" " +
 		$"-username {unityEmail} " +
 		$"-password {unityPassword}"
-	);
+	, settings);
 
 	if (exitCode != 0 || !FileExists(unityBuildDir + File("AlmVR.exe")))
 		throw new Exception("ERRRRRRRRRRRR");
