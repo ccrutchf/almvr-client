@@ -9,10 +9,10 @@ $installUnity = Get-Content .\install-unity.au3
 $newLines = @()
 foreach ($line in $installUnity) {
     if ($line -eq "; **Send User Name**") {
-        $newLines += "Send(`"$($env:UNITY_EMAIL)`""
+        $newLines += "Send(`"$($env:UNITY_EMAIL)`")"
     }
     elseif ($line -eq "") {
-        $newLines += "Send(`"$($env:UNITY_PASSWORD)`""
+        $newLines += "Send(`"$($env:UNITY_PASSWORD)`")"
     }
     else {
         $newLines += $lines
