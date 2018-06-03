@@ -1,6 +1,7 @@
 #addin "Cake.Incubator"
 #addin "Cake.Docker"
-#addin nuget:?package=Cake.Unity3D
+#addin nuget:https://www.myget.org/F/alm-vr/api/v2?package=Cake.GitVersioning&prerelease
+#addin "Cake.Powershell"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -9,12 +10,15 @@
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 
+dynamic version;
+
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
 //////////////////////////////////////////////////////////////////////
 
 // Define directories.
-var buildDir = Directory("./src/AlmVR.Server/AlmVR.Server/bin") + Directory(configuration);
+var clientBuildDir = Directory("./src/client/build") + Directory(configuration);
+var unityBuildDir = Directory("./build");
 
 //////////////////////////////////////////////////////////////////////
 // TASKS
@@ -23,52 +27,24 @@ var buildDir = Directory("./src/AlmVR.Server/AlmVR.Server/bin") + Directory(conf
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectory(buildDir);
+	CleanDirectory(clientBuildDir);
+    CleanDirectory(unityBuildDir);
 });
 
-Task("Build-Server")
-    .IsDependentOn("Clean")
+Task("Git-Versioning")
 	.Does(() =>
 {
-	var dotNetCoreSettings = new DotNetCoreBuildSettings
-	{
-		Configuration = configuration
-	};
-	
-	DotNetCoreBuild("./src/AlmVR.Server/AlmVR.Server.sln", dotNetCoreSettings);
-});
+	version = GitVersioningGetVersion();
 
-Task("Publish-Server")
-	.IsDependentOn("Build-Server")
-	.Does(() =>
-{
-     var settings = new DotNetCorePublishSettings
-     {
-         Configuration = "Release",
-         OutputDirectory = "./src/AlmVR.Server/artifacts/"
-     };
+	Information($"Version number: \"{version.AssemblyInformationalVersion}\".");
 
-     DotNetCorePublish("./src/AlmVR.Server/AlmVR.Server.sln", settings);
-});
+	var script = @"
+if (Get-Command ""Update-AppveyorBuild"" -errorAction SilentlyContinue)
+{{
+    Update-AppveyorBuild -Version {0}
+}}";
 
-Task("Copy-Plugins")
-	.IsDependentOn("Publish-Server")
-	.Does(() =>
-{
-	CreateDirectory("./src/AlmVR.Server/artifacts/Plugins/");
-	CopyFiles("./src/AlmVR.Server/build/Plugins/*", "./src/AlmVR.Server/artifacts/Plugins/");
-});
-
-Task("Docker-Build-Server")
-	.IsDependentOn("Copy-Plugins")
-	.Does(() =>
-{
-	var dockerImageBuildSettings = new DockerImageBuildSettings
-	{
-		Tag = new string[] { "almvr" }
-	};
-
-	DockerBuild(dockerImageBuildSettings, "./src/AlmVR.Server");
+	StartPowershellScript(string.Format(script, version.AssemblyInformationalVersion));
 });
 
 Task("Build-Client")
@@ -80,10 +56,11 @@ Task("Build-Client")
 		Configuration = configuration
 	};
 	
-	DotNetCoreBuild("./src/AlmVR.Server/AlmVR.Server.sln", dotNetCoreSettings);
+	DotNetCoreBuild("./src/client/AlmVR.Client.sln", dotNetCoreSettings);
 });
 
 Task("Build-Unity")
+	.IsDependentOn("Git-Versioning")
 	.IsDependentOn("Build-Client")
 	.Does(() =>
 {
@@ -91,7 +68,7 @@ Task("Build-Unity")
 	
 	Information($"Unity Editor Location: {unityEditorLocation}");
 	
-	// Presuming the build.cake file is within the Unity3D project folder.
+	/*// Presuming the build.cake file is within the Unity3D project folder.
 	var projectPath = System.IO.Path.GetFullPath("./src/AlmVR.Headset");
 	
 	// The location we want the build application to go
@@ -108,20 +85,15 @@ Task("Build-Unity")
 	};
 	
 	// Perform the Unity3d build.
-	BuildUnity3DProject(projectPath, options);
+	BuildUnity3DProject(projectPath, options);*/
 });
-
-Task("Build")
-	.IsDependentOn("Docker-Build-Server")
-	.IsDependentOn("Build-Client");
-	//.IsDependentOn("Build-Unity");
 
 //////////////////////////////////////////////////////////////////////
 // TASK TARGETS
 //////////////////////////////////////////////////////////////////////
 
 Task("Default")
-    .IsDependentOn("Build");
+    .IsDependentOn("Build-Unity");
 
 //////////////////////////////////////////////////////////////////////
 // EXECUTION
