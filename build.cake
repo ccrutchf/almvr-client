@@ -64,15 +64,10 @@ Task("Build-Client")
 });
 
 Task("Build-Unity")
-	.WithCriteria(!string.IsNullOrWhiteSpace(EnvironmentVariable("UNITY_EMAIL")))
-	.WithCriteria(!string.IsNullOrWhiteSpace(EnvironmentVariable("UNITY_PASSWORD")))
 	.IsDependentOn("Git-Versioning")
 	.IsDependentOn("Build-Client")
 	.Does(() =>
 {
-	var unityEmail = EnvironmentVariable("UNITY_EMAIL");
-	var unityPassword = EnvironmentVariable("UNITY_PASSWORD");
-
 	var unityEditorLocation = EnvironmentVariable("UNITY_EDITOR_LOCATION") ?? @"C:\Program Files\Unity\Editor\Unity.exe";
 	Information($"Unity Editor Location: {unityEditorLocation}");
 
@@ -93,9 +88,7 @@ Task("Build-Unity")
 			$"-projectpath \"{projectPath}\" " +
 			$"-buildWindows64Player \"{outPath}\" " +
 			"-nographics " +
-			$"-log \"{logPath}\" " + 
-			$"-username {unityEmail} " +
-			$"-password {unityPassword}",
+			$"-log \"{logPath}\" ",
 
 		RedirectStandardError = true,
 		RedirectStandardOutput = true
@@ -138,7 +131,6 @@ Task("Build-Unity")
 
 Task("Package")
 	.IsDependentOn("Build-Unity")
-	.WithCriteria(FileExists(unityBuildDir + File("AlmVR.exe")))
 	.Does(() =>
 {
 	Zip(unityBuildDir, "./almvr.zip");
