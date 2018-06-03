@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028334, g: 0.2257134, b: 0.30692226, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -890,7 +890,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CardPrefab: {fileID: 1176178219055488, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-  HostName: 159.65.109.28
+  HostName: 159.65.100.208
   Port: 9090
 --- !u!1 &1494148329
 GameObject:
@@ -1026,7 +1026,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8879bd156ca1514d88b01587d9e12ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Island: {fileID: 72269694}
   TeleportThreshold: 0.5
   NoHoldThreshold: 0.5
   RotateThreshold: 0.4
