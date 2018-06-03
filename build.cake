@@ -96,8 +96,6 @@ Task("Build-Unity")
 		RedirectStandardOutput = true
 	};
 
-	int exitCode = StartProcess(unityEditorLocation, settings);
-
 	IEnumerable<string> redirectedStandardOutput;
 	IEnumerable<string> redirectedErrorOutput;
 	int exitCode = StartProcess(
@@ -118,7 +116,9 @@ Task("Build-Unity")
 		throw new Exception(
 			string.Format(
 				"Errors ocurred: {0}",
-				string.Join(", ", redirectedErrorOutput));
+				string.Join(", ", redirectedErrorOutput)
+			)
+		);
 	}
 
 	if (exitCode != 0)
