@@ -54,5 +54,7 @@ MouseClick($MOUSE_CLICK_LEFT)
 ; Wait for next page to load
 Sleep(10 * 1000)
 
+_ScreenCapture_Capture(@WorkingDir & "\GDIPlus_Image1.jpg")
+
 ; Close the Window
 WinClose("[Active]")
