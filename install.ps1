@@ -15,7 +15,7 @@ foreach ($line in $installUnity) {
         $newLines += "Send(`"$($env:UNITY_PASSWORD)`")"
     }
     else {
-        $newLines += $lines
+        $newLines += $line
     }
 }
 Set-Content -Path .\install-unity.au3 -Value $newLines
