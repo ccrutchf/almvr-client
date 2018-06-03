@@ -110,7 +110,8 @@ Task("Build-Unity")
 		out redirectedErrorOutput
 	);
 
-	Information(FileReadText(logPath));
+	if (FileExists(logPath))
+		Information(FileReadText(logPath));
 
 	foreach (var line in redirectedStandardOutput)
 	{
