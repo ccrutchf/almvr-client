@@ -90,7 +90,7 @@ Task("Build-Unity")
 			$"-projectpath \"{projectPath}\" " +
 			$"-buildWindows64Player \"{outPath}\" " +
 			"-nographics " +
-			"-log .\unity.log " + 
+			@"-log .\unity.log " + 
 			$"-username {unityEmail} " +
 			$"-password {unityPassword}",
 
