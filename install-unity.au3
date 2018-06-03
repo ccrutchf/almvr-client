@@ -9,6 +9,7 @@
 #ce ----------------------------------------------------------------------------
 
 #include <AutoItConstants.au3>
+#include <ScreenCapture.au3>
 
 ; Script Start - Add your code below here
 Run("C:\Program Files\Unity\Editor\Unity.exe")
