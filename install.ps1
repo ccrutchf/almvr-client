@@ -1,4 +1,3 @@
-Import-Module NetTCPIP
 $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # Force Unity version.
@@ -24,3 +23,5 @@ foreach ($line in $installUnity) {
 Set-Content -Path .\install-unity.au3 -Value $newLines
 
 & autoit3 .\install-unity.au3
+
+$blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
