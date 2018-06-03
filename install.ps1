@@ -20,6 +20,4 @@ foreach ($line in $installUnity) {
 }
 Set-Content -Path .\install-unity.au3 -Value $newLines
 
-Get-Content .\install-unity.au3
-
 & autoit3 .\install-unity.au3
