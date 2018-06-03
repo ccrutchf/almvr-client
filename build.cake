@@ -2,6 +2,7 @@
 #addin "Cake.Docker"
 #addin nuget:https://www.myget.org/F/alm-vr/api/v2?package=Cake.GitVersioning&prerelease
 #addin "Cake.Powershell"
+#addin "Cake.FileHelpers"
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -89,6 +90,7 @@ Task("Build-Unity")
 			$"-projectpath \"{projectPath}\" " +
 			$"-buildWindows64Player \"{outPath}\" " +
 			"-nographics " +
+			"-log .\unity.log " + 
 			$"-username {unityEmail} " +
 			$"-password {unityPassword}",
 
@@ -104,6 +106,8 @@ Task("Build-Unity")
 		out redirectedStandardOutput,
 		out redirectedErrorOutput
 	);
+
+	Information(FileReadText("./unity.log"));
 
 	foreach (var line in redirectedStandardOutput)
 	{
