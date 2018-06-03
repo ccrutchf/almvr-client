@@ -88,6 +88,7 @@ Task("Build-Unity")
 			"-batchmode " + 
 			$"-projectpath \"{projectPath}\" " +
 			$"-buildWindows64Player \"{outPath}\" " +
+			"-nographics " +
 			$"-username {unityEmail} " +
 			$"-password {unityPassword}",
 
