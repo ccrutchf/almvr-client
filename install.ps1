@@ -1,3 +1,5 @@
+$blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
 # Force Unity version.
 & choco install unity --version 2018.1.2 -y --no-progress
 & choco install autoit.commandline -y --no-progress
