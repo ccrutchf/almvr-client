@@ -76,12 +76,15 @@ Task("Build-Unity")
 	var outPath = System.IO.Path.GetFullPath((string)unityBuildDir) + "\\AlmVR.exe";
 	Information($"Unity Out Path: {outPath}");
 	
-	StartProcess(unityEditorLocation, 
+	int exitCode = StartProcess(unityEditorLocation, 
 		"-quit " +
 		"-batchmode " + 
 		$"-projectpath \"{projectPath}\" " +
 		$"-buildWindows64Player \"{outPath}\" "
 	);
+
+	if (exitCode != 0)
+		throw new Exception("ERRRRRRRRRRRR");
 });
 
 Task("Package")
