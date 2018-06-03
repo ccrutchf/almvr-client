@@ -11,7 +11,7 @@ foreach ($line in $installUnity) {
     if ($line -eq "; **Send User Name**") {
         $newLines += "Send(`"$($env:UNITY_EMAIL)`")"
     }
-    elseif ($line -eq "") {
+    elseif ($line -eq "; **Send Password**") {
         $newLines += "Send(`"$($env:UNITY_PASSWORD)`")"
     }
     else {
