@@ -18,6 +18,8 @@ foreach ($line in $installUnity) {
         $newLines += $lines
     }
 }
-Set-Content -Path .\install.ps1 -Value $newLines
+Set-Content -Path .\install-unity.au3 -Value $newLines
+
+Get-Content .\install-unity.au3
 
 & autoit3 .\install-unity.au3
