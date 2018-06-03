@@ -98,8 +98,34 @@ Task("Build-Unity")
 
 	int exitCode = StartProcess(unityEditorLocation, settings);
 
-	if (exitCode != 0 || !FileExists(unityBuildDir + File("AlmVR.exe")))
-		throw new Exception("ERRRRRRRRRRRR");
+	IEnumerable<string> redirectedStandardOutput;
+	IEnumerable<string> redirectedErrorOutput;
+	int exitCode = StartProcess(
+		unityEditorLocation, 
+		settings,
+		out redirectedStandardOutput,
+		out redirectedErrorOutput
+	);
+
+	foreach (var line in redirectedStandardOutput)
+	{
+		Information(line);
+	}
+
+	// Throw exception if anything was written to the standard error.
+	if (redirectedErrorOutput.Any())
+	{
+		throw new Exception(
+			string.Format(
+				"Errors ocurred: {0}",
+				string.Join(", ", redirectedErrorOutput));
+	}
+
+	if (exitCode != 0)
+		throw new Exception($"Unity returned a non-zero exit code: \"{exitCode}\".");
+
+	if (!FileExists(unityBuildDir + File("AlmVR.exe")))
+		throw new Exception("Expected build output not created");
 });
 
 Task("Package")
