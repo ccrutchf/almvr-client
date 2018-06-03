@@ -83,18 +83,19 @@ Task("Build-Unity")
 	
 	var settings = new ProcessSettings
 	{
+		Arguments = 
+			"-quit " +
+			"-batchmode " + 
+			$"-projectpath \"{projectPath}\" " +
+			$"-buildWindows64Player \"{outPath}\" " +
+			$"-username {unityEmail} " +
+			$"-password {unityPassword}",
+
 		RedirectStandardError = true,
 		RedirectStandardOutput = true
 	};
 
-	int exitCode = StartProcess(unityEditorLocation, 
-		"-quit " +
-		"-batchmode " + 
-		$"-projectpath \"{projectPath}\" " +
-		$"-buildWindows64Player \"{outPath}\" " +
-		$"-username {unityEmail} " +
-		$"-password {unityPassword}"
-	, settings);
+	int exitCode = StartProcess(unityEditorLocation, settings);
 
 	if (exitCode != 0 || !FileExists(unityBuildDir + File("AlmVR.exe")))
 		throw new Exception("ERRRRRRRRRRRR");
