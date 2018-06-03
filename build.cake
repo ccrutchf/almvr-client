@@ -81,6 +81,12 @@ Task("Build-Unity")
 	var outPath = System.IO.Path.GetFullPath((string)unityBuildDir) + "\\AlmVR.exe";
 	Information($"Unity Out Path: {outPath}");
 	
+	var settings = new ProcessSettings
+	{
+		RedirectStandardError = true,
+		RedirectStandardOutput = true
+	};
+
 	int exitCode = StartProcess(unityEditorLocation, 
 		"-quit " +
 		"-batchmode " + 
