@@ -5,8 +5,6 @@
 # We need a desktop to do automation
 .\enable-desktop.ps1
 
-$blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
 $installUnity = Get-Content .\install-unity.au3
 $newLines = @()
 foreach ($line in $installUnity) {
