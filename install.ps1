@@ -5,6 +5,8 @@
 # We need a desktop to do automation
 .\enable-desktop.ps1
 
+Start-Sleep -Seconds 10
+
 $installUnity = Get-Content .\install-unity.au3
 $newLines = @()
 foreach ($line in $installUnity) {
