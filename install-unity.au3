@@ -18,7 +18,7 @@ Run("C:\Program Files\Unity\Editor\Unity.exe")
 WinWaitActive("[Chrome_WidgetWin_0]", "", 60)
 
 ; Give Unity some time to load
-Sleep(25 * 1000)
+Sleep(15 * 1000)
 
 ; Get the position of the Unity Window
 $unityPos = WinGetPos("[Active]")
