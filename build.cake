@@ -1,7 +1,6 @@
 #addin "Cake.Incubator"
 #addin "Cake.Docker"
 #addin nuget:https://www.myget.org/F/alm-vr/api/v2?package=Cake.GitVersioning&prerelease
-#addin "Cake.Powershell"
 #addin "Cake.FileHelpers"
 
 //////////////////////////////////////////////////////////////////////
@@ -10,8 +9,6 @@
 
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
-
-dynamic version;
 
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
@@ -35,22 +32,6 @@ Task("Clean")
 		DeleteFile("./almvr.zip");
 });
 
-Task("Git-Versioning")
-	.Does(() =>
-{
-	version = GitVersioningGetVersion();
-
-	Information($"Version number: \"{version.AssemblyInformationalVersion}\".");
-
-	var script = @"
-if (Get-Command ""Update-AppveyorBuild"" -errorAction SilentlyContinue)
-{{
-    Update-AppveyorBuild -Version {0}
-}}";
-
-	StartPowershellScript(string.Format(script, version.AssemblyInformationalVersion));
-});
-
 Task("Build-Client")
     .IsDependentOn("Clean")
 	.Does(() =>
@@ -64,7 +45,6 @@ Task("Build-Client")
 });
 
 Task("Build-Unity")
-	.IsDependentOn("Git-Versioning")
 	.IsDependentOn("Build-Client")
 	.Does(() =>
 {
