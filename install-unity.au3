@@ -33,7 +33,7 @@ Send("{TAB}")
 Send("{ENTER}")
 
 ; Wait for the next page to load
-Sleep(5 * 1000)
+Sleep(15 * 1000)
 
 ; Click on the Free License
 MouseMove($unityPos[0] + 700, $unityPos[1] + 300)
@@ -52,7 +52,7 @@ MouseMove($unityPos[0] + 700, $unityPos[1] + 425)
 MouseClick($MOUSE_CLICK_LEFT)
 
 ; Wait for next page to load
-Sleep(10 * 1000)
+Sleep(15 * 1000)
 
 _ScreenCapture_Capture(@WorkingDir & "\GDIPlus_Image1.jpg")
 
