@@ -6,18 +6,15 @@ using UnityEngine;
 public class Movement : MonoBehaviour {
 
     private const string TELEPORT_CAPABLE_TAG = "TeleportReceiver";
-    private const string CONTROLLER_TAG = "GameController";
 
-    private bool wasStickHeldLastFrame;
-    private Vector3 currentTargetPosition;
-    private Vector2 currentStickPosition;
+    private Vector2 prevTouchPos = Vector2.zero;
+    private Vector2 swipeDelta = Vector2.zero;
+    private bool hasSwiped = false;
+    private float targetRotation;
     private NetworkManager networkManager;
 
-    public float TeleportThreshold = 0.5f;
-    public float NoHoldThreshold = 0.5f;
-    public float RotateThreshold = 0.4f;
-    public float RotateExponent = 1.5f;
-    public float MaxRotateSpeed = 1.25f;
+    public float SwipeThreshold = 0.125f;
+    public float RotationAmount = 20;
 
     public GvrLaserPointer GvrLaserPointer;
 
@@ -39,7 +36,7 @@ public class Movement : MonoBehaviour {
         //var secondaryThumbstick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
 
         Teleport(device);
-        //Rotate(secondaryThumbstick);
+        Rotate(device);
     }
 
     private void Teleport(GvrControllerInputDevice device)
@@ -48,21 +45,42 @@ public class Movement : MonoBehaviour {
             GvrLaserPointer.CurrentRaycastResult.gameObject != null &&
             GvrLaserPointer.CurrentRaycastResult.gameObject.tag == TELEPORT_CAPABLE_TAG)
         {
-
             transform.position = GvrLaserPointer.CurrentRaycastResult.worldPosition + new Vector3(0, 1.5f, 0);
         }
     }
 
-    private void Rotate(Vector2 thumbstick)
+    private void Rotate(GvrControllerInputDevice device)
     {
-        if (Mathf.Abs(thumbstick.x) > RotateThreshold)
+        if (device.GetButton(GvrControllerButton.TouchPadTouch) && !device.GetButton(GvrControllerButton.TouchPadButton))
         {
-            var eulerAngles = transform.rotation.eulerAngles;
-            var direction = Mathf.Abs(thumbstick.x) / thumbstick.x;
-            eulerAngles.y += direction * Mathf.Min(Mathf.Pow(RotateExponent, Mathf.Abs(thumbstick.x)), MaxRotateSpeed);
-            transform.eulerAngles = eulerAngles;
+            if (prevTouchPos == Vector2.zero)
+                prevTouchPos = device.TouchPos;
+            else
+            {
+                swipeDelta = device.TouchPos - prevTouchPos;
+                prevTouchPos = device.TouchPos;
 
-            networkManager.RaiseEvent(NetworkManager.EventCode.PlayerRotationChanged, eulerAngles.y);
+                if (!hasSwiped && swipeDelta.magnitude >= SwipeThreshold)
+                {
+                    targetRotation += RotationAmount * swipeDelta.x / Mathf.Abs(swipeDelta.x);
+
+                    if (targetRotation > 360)
+                        targetRotation -= 360;
+                    else if (targetRotation < 0)
+                        targetRotation += 360;
+
+                    hasSwiped = true;
+                }
+            }
         }
+        else
+        {
+            prevTouchPos = Vector2.zero;
+            hasSwiped = false;
+        }
+
+        var eulerAngles = transform.eulerAngles;
+        eulerAngles.y = Mathf.Lerp(eulerAngles.y, targetRotation, Time.deltaTime * 5);
+        transform.eulerAngles = eulerAngles;
     }
 }

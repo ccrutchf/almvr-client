@@ -1139,11 +1139,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8879bd156ca1514d88b01587d9e12ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeleportThreshold: 0.5
-  NoHoldThreshold: 0.5
-  RotateThreshold: 0.4
-  RotateExponent: 1.5
-  MaxRotateSpeed: 1.25
+  SwipeThreshold: 0.125
+  RotationAmount: 40
   GvrLaserPointer: {fileID: 1158841081}
   NetworkManagerObject: {fileID: 0}
 --- !u!1001 &1881261516
