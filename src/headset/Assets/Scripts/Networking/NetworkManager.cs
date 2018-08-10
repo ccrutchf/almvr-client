@@ -75,8 +75,8 @@ public class NetworkManager : PunBehaviour {
             }
             else
             {
-                go = Instantiate(Resources.Load("RemoteAvatar")) as GameObject;
-                go.GetComponent<RemoteAvatarSync>().NetworkManager = this;
+                //go = Instantiate(Resources.Load("RemoteAvatar")) as GameObject;
+                //go.GetComponent<RemoteAvatarSync>().NetworkManager = this;
             }
 
             if (go != null)

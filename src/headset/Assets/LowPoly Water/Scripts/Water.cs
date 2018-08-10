@@ -66,19 +66,19 @@ public class Water : MonoBehaviour
 
 	void CalcWave ()
 	{
-		for (int i = 0; i < verts.Length; i++) {
-			Vector3 v = verts [i];
-			v.y = 0.0f;
-			float dist = Vector3.Distance (v, waveSource1);
-			dist = (dist % waveLength) / waveLength;
-			v.y = waveHeight * Mathf.Sin (Time.time * Mathf.PI * 2.0f * waveFrequency
-			+ (Mathf.PI * 2.0f * dist));
-			verts [i] = v;
-		}
-		mesh.vertices = verts;
-		mesh.RecalculateNormals (); 
-		mesh.MarkDynamic ();
+		//for (int i = 0; i < verts.Length; i++) {
+		//	Vector3 v = verts [i];
+		//	v.y = 0.0f;
+		//	float dist = Vector3.Distance (v, waveSource1);
+		//	dist = (dist % waveLength) / waveLength;
+		//	v.y = waveHeight * Mathf.Sin (Time.time * Mathf.PI * 2.0f * waveFrequency
+		//	+ (Mathf.PI * 2.0f * dist));
+		//	verts [i] = v;
+		//}
+		//mesh.vertices = verts;
+		//mesh.RecalculateNormals (); 
+		//mesh.MarkDynamic ();
 	
-		GetComponent<MeshFilter> ().mesh = mesh;
+		//GetComponent<MeshFilter> ().mesh = mesh;
 	}
 }
