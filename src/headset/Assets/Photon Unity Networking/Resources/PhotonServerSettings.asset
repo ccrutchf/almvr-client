@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppID: 56626b7d-999e-40ee-9f1b-6bcbb6f6355e
-  VoiceAppID: 
-  ChatAppID: 
+  VoiceAppID: 56626b7d-999e-40ee-9f1b-6bcbb6f6355e
+  ChatAppID: 56626b7d-999e-40ee-9f1b-6bcbb6f6355e
   HostType: 1
   PreferredRegion: 0
   EnabledRegions: -1
@@ -28,12 +28,18 @@ MonoBehaviour:
   RunInBackground: 1
   RpcList:
   - Chat
+  - ColorRpc
   - DestroyRpc
+  - DoJump
+  - Flash
   - InstantiateRpc
+  - Marco
   - PickupItemInit
+  - Polo
   - PunPickup
   - PunPickupSimple
   - PunRespawn
   - RequestForPickupItems
   - RequestForPickupTimes
+  - TaggedPlayer
   DisableAutoOpenWizard: 1

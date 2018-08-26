@@ -18,10 +18,18 @@ public class NetworkManager : PunBehaviour {
     public event EventHandler<NetworkEventReceivedEventArgs> NetworkEventReceived;
 
     public string RoomName;
-    public GameObject LocalAvatar;
+    public GameObject LocalPlayer;
+    public GameObject RemotePlayer;
+    public GameObject PUNVoice;
+
+    private PhotonVoiceRecorder _voiceRecorder;
 
 	void Start () {
         PhotonNetwork.ConnectUsingSettings("1.0");
+    }
+
+    private void Update()
+    {
     }
 
     public void OnDestroy()
@@ -33,17 +41,28 @@ public class NetworkManager : PunBehaviour {
     {
         base.OnJoinedLobby();
 
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.IsVisible = false;
-        roomOptions.MaxPlayers = 8;
+        RoomOptions roomOptions = new RoomOptions
+        {
+            IsVisible = false,
+            MaxPlayers = 8
+        };
         PhotonNetwork.JoinOrCreateRoom(RoomName, roomOptions, TypedLobby.Default);
     }
 
     public override void OnJoinedRoom()
     {
+        var punVoice = GameObject.Instantiate(PUNVoice);
+        _voiceRecorder = punVoice.GetComponent<PhotonVoiceRecorder>();
+
         int viewId = PhotonNetwork.AllocateViewID();
 
-        RaiseEvent(EventCode.InstantiateVRAvatar, viewId);
+        var data = new Dictionary<string, object>
+        {
+            { "ViewID", viewId },
+            { "Position", LocalPlayer.transform.position }
+        };
+
+        RaiseEvent(EventCode.InstantiateVRAvatar, data);
     }
 
     public void OnEnable()
@@ -69,23 +88,28 @@ public class NetworkManager : PunBehaviour {
         {
             GameObject go = null;
 
-            if (PhotonNetwork.player.ID == senderid)
+            if (PhotonNetwork.player.ID != senderid)
             {
-                go = LocalAvatar;
-            }
-            else
-            {
-                //go = Instantiate(Resources.Load("RemoteAvatar")) as GameObject;
-                //go.GetComponent<RemoteAvatarSync>().NetworkManager = this;
-            }
+                var data = (Dictionary<string, object>)content;
 
-            if (go != null)
-            {
+                go = Instantiate(RemotePlayer) as GameObject;
+                go.transform.position = (Vector3)data["Position"];
+
+                var remotePlayerManager = go.GetComponent<RemotePlayerManager>();
+                remotePlayerManager.NetworkManager = this;
+                remotePlayerManager.InitializeNetworkManager();
+
                 PhotonView pView = go.GetComponent<PhotonView>();
 
                 if (pView != null)
                 {
-                    pView.viewID = (int)content;
+                    pView.viewID = (int)data["ViewID"];
+                }
+
+                if (_voiceRecorder != null)
+                {
+                    _voiceRecorder.Transmit = false;
+                    _voiceRecorder.Transmit = true;
                 }
             }
         }

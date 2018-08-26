@@ -240,11 +240,7 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
     public bool IsUsingNameServer { get; protected internal set; }
 
     /// <summary>Name Server Host Name for Photon Cloud. Without port and without any prefix.</summary>
-    #if !UNITY_EDITOR && UNITY_SWITCH
-    public const string NameServerHost = "nameserver-eu.cloudapp.net";//set to "ns.exitgames.com" after Nintendo has fixed the traffic manager bug in their dns-resolver for which this is a workaround
-    #else
     public const string NameServerHost = "ns.exitgames.com";
-    #endif
 
     /// <summary>Name Server for HTTP connections to the Photon Cloud. Includes prefix and port.</summary>
     public const string NameServerHttp = "http://ns.exitgamescloud.com:80/photon/n";
@@ -2572,6 +2568,13 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                 break;
 
             case EventCode.Leave:
+				
+				// Clean up if we were loading asynchronously.
+				if (_AsyncLevelLoadingOperation!=null)
+				{
+					_AsyncLevelLoadingOperation = null;
+				}
+
                 this.HandleEventLeave(actorNr, photonEvent);
                 break;
 
@@ -2624,6 +2627,9 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                 break;
 
             case PunEvent.CloseConnection:
+
+				
+
                 // MasterClient "requests" a disconnection from us
                 if (originatingPlayer == null || !originatingPlayer.IsMasterClient)
                 {
@@ -2631,6 +2637,11 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                 }
                 else
                 {
+					// Clean up if we were loading asynchronously.
+					if (_AsyncLevelLoadingOperation!=null)
+					{
+						_AsyncLevelLoadingOperation = null;
+					}
                     PhotonNetwork.LeaveRoom(false);
                 }
 
@@ -2697,16 +2708,12 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
                 SendMonoMessage(PhotonNetworkingMessage.OnLobbyStatisticsUpdate);
                 break;
 
-            case EventCode.ErrorInfo:
-                if (PhotonNetwork.OnEventCall != null)
-                {
-                    object content = photonEvent[ParameterCode.Info];
-                    PhotonNetwork.OnEventCall(photonEvent.Code, content, actorNr);
-                }
-                else
-                {
-                    Debug.LogWarning("Warning: Unhandled Event ErrorInfo (251). Set PhotonNetwork.OnEventCall to the method PUN should call for this event.");
-                }
+		case EventCode.ErrorInfo:
+
+				if (!PhotonNetwork.CallEvent(photonEvent.Code, photonEvent [ParameterCode.Info], actorNr))
+				{
+					Debug.LogWarning("Warning: Unhandled Event ErrorInfo (251). Set PhotonNetwork.OnEventCall to the method PUN should call for this event.");
+				}
                 break;
 
             case EventCode.AuthEvent:
@@ -2723,15 +2730,10 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
             default:
                 if (photonEvent.Code < 200)
                 {
-                    if (PhotonNetwork.OnEventCall != null)
-                    {
-                        object content = photonEvent[ParameterCode.Data];
-                        PhotonNetwork.OnEventCall(photonEvent.Code, content, actorNr);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Warning: Unhandled event " + photonEvent + ". Set PhotonNetwork.OnEventCall.");
-                    }
+					if (!PhotonNetwork.CallEvent(photonEvent.Code, photonEvent [ParameterCode.Data], actorNr))
+					{
+						Debug.LogWarning("Warning: Unhandled event " + photonEvent + ". Set PhotonNetwork.OnEventCall.");
+					}
                 }
                 break;
         }
@@ -3708,7 +3710,7 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
         opParameters[ParameterCode.Code] = (byte)0;		// any event
         opParameters[ParameterCode.Cache] = (byte)EventCaching.RemoveFromRoomCacheForActorsLeft;    // option to clear the room cache of all events of players who left
 
-        this.OpCustom((byte)OperationCode.RaiseEvent, opParameters, true, 0);
+        this.SendOperation((byte)OperationCode.RaiseEvent, opParameters, SendOptions.SendReliable);
     }
 
     // Remove RPCs of view (if they are local player's RPCs)
@@ -4038,6 +4040,17 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
         {
             return;
         }
+
+		// we are currently loading asynchronously, so we need to check when it's done, we might have not been able to do so 
+		// when we joined the room
+		if (PhotonNetwork.inRoom && _AsyncLevelLoadingOperation != null)
+		{
+			if (_AsyncLevelLoadingOperation.isDone)
+			{
+				_AsyncLevelLoadingOperation = null;
+				LoadLevelIfSynced ();
+			}
+		}
 
         // no need to send OnSerialize messages while being alone (these are not buffered anyway)
         if (this.mActors.Count <= 1)
@@ -4626,7 +4639,7 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
 			{
 				if (LoadAsync)
 				{
-					PhotonNetwork.LoadLevelAsync((int)sceneId);
+					_AsyncLevelLoadingOperation = PhotonNetwork.LoadLevelAsync((int)sceneId);
 				}else{
                 	PhotonNetwork.LoadLevel((int)sceneId);
 				}
@@ -4638,7 +4651,7 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
 			{
 				if (LoadAsync)
 				{
-					PhotonNetwork.LoadLevelAsync((string)sceneId);
+					_AsyncLevelLoadingOperation = PhotonNetwork.LoadLevelAsync((string)sceneId);
 				}else{
                 	PhotonNetwork.LoadLevel((string)sceneId);
 				}
@@ -4706,7 +4719,7 @@ internal class NetworkingPeer : LoadBalancingPeer, IPhotonPeerListener
         opParameters.Add(ParameterCode.UriPath, uriPath);
         opParameters.Add(ParameterCode.WebRpcParameters, parameters);
 
-        return this.OpCustom(OperationCode.WebRpc, opParameters, true);
+        return this.SendOperation(OperationCode.WebRpc, opParameters, SendOptions.SendReliable);
 
     }
 }

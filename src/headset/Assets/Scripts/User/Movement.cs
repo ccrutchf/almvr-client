@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour {
     private Vector2 swipeDelta = Vector2.zero;
     private bool hasSwiped = false;
     private float targetRotation;
+    private float currentRotation;
     private NetworkManager networkManager;
 
     public float SwipeThreshold = 0.125f;
@@ -46,6 +47,8 @@ public class Movement : MonoBehaviour {
             GvrLaserPointer.CurrentRaycastResult.gameObject.tag == TELEPORT_CAPABLE_TAG)
         {
             transform.position = GvrLaserPointer.CurrentRaycastResult.worldPosition + new Vector3(0, 1.5f, 0);
+
+            networkManager.RaiseEvent(NetworkManager.EventCode.PlayerPositionChanged, transform.position);
         }
     }
 
@@ -68,6 +71,13 @@ public class Movement : MonoBehaviour {
                         targetRotation -= 360;
                     else if (targetRotation < 0)
                         targetRotation += 360;
+
+                    var quat = transform.rotation;
+                    var temp = quat.eulerAngles;
+                    temp.y = targetRotation;
+                    quat.eulerAngles = temp;
+
+                    networkManager.RaiseEvent(NetworkManager.EventCode.PlayerRotationChanged, quat);
 
                     hasSwiped = true;
                 }
