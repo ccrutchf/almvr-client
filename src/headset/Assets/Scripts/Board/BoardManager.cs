@@ -7,8 +7,12 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour {
     private const string CARD_TAG = "Card";
+    private const float RADIUS = 14f;
 
     public GameObject CardPrefab;
+    public GameObject SwimLanePrefab;
+
+    public GameObject Island;
 
     private IBoardClient boardClient;
     private ICardClient cardClient;
@@ -27,16 +31,39 @@ public class BoardManager : MonoBehaviour {
 
         var board = await boardClient.GetBoardAsync();
 
+        int counter = 0;
+        float degrees = Mathf.PI / (float)board.SwimLanes.Count();
+        foreach (var lane in board.SwimLanes)
+        {
+            var go = GameObject.Instantiate(SwimLanePrefab, transform);
+
+            var x = transform.position.x + RADIUS * Mathf.Cos(degrees * (float)counter);
+            var z = transform.position.z + RADIUS * Mathf.Sin(degrees * (float)counter);
+
+            var ray = new Ray(new Vector3(x, 100.0f, z), Vector3.down);
+            RaycastHit hit = default(RaycastHit);
+
+            if (Island.GetComponent<Collider>().Raycast(ray, out hit, 100.0f))
+            {
+                go.transform.position = hit.point;
+
+                var centerPos = go.transform.position;
+                centerPos.y = hit.point.y;
+
+                go.transform.forward = go.transform.position - centerPos;
+            }
+
+            counter++;
+        }
+
         var cards = board.SwimLanes.SelectMany(s => s.Cards)
-                        .ToDictionary(s => s.ID, s => GameObject.Instantiate(CardPrefab));
+                        .ToDictionary(c => c.ID, c => GameObject.Instantiate(CardPrefab, transform));
 
         foreach (var key in cards.Keys)
         {
             var cardScript = cards[key].GetComponent<Card>();
             cardScript.ID = key;
             cardScript.CardClient = cardClient;
-
-            cards[key].transform.parent = transform;
 
 #pragma warning disable
             // We do not need to wait for this to finish.
