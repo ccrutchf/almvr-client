@@ -6,6 +6,8 @@ using System.Linq;
 using UnityEngine;
 
 public class BoardManager : MonoBehaviour {
+    private const string CARD_TAG = "Card";
+
     public GameObject CardPrefab;
 
     private IBoardClient boardClient;
@@ -13,9 +15,10 @@ public class BoardManager : MonoBehaviour {
 
     public string HostName;
     public int Port;
-    
-	// Use this for initialization
-	async void Start () {
+    public GvrLaserPointer GvrLaserPointer;
+
+    // Use this for initialization
+    async void Start () {
         boardClient = ClientFactory.GetInstance<IBoardClient>();
         cardClient = ClientFactory.GetInstance<ICardClient>();
 
@@ -44,8 +47,21 @@ public class BoardManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        GvrPointerInputModule.Pointer = GvrLaserPointer;
+
+        //var device = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
+
+        foreach (var go in GameObject.FindGameObjectsWithTag(CARD_TAG))
+        {
+            go.transform.GetChild(0).localScale = Vector3.zero;
+        }
+
+        if (GvrLaserPointer.CurrentRaycastResult.gameObject != null &&
+            GvrLaserPointer.CurrentRaycastResult.gameObject.tag == CARD_TAG)
+        {
+            GvrLaserPointer.CurrentRaycastResult.gameObject.transform.GetChild(0).localScale = Vector3.one;
+        }
+    }
 
     private void OnDestroy() {
         boardClient.Dispose();

@@ -28,6 +28,11 @@ public class Card : MonoBehaviour {
         cardModel = await CardClient.GetCardAsync(ID);
 
         name = cardModel.Name;
-        GetComponentInChildren<Text>().text = cardModel.Name;
+
+        var text = GetComponentInChildren<Text>();
+        if (text != null)
+        {
+            text.text = cardModel.Name;
+        }
     }
 }
