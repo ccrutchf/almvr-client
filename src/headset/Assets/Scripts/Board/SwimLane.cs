@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SwimLane : MonoBehaviour {
     private const float RADIUS = 2.0f;
@@ -38,6 +39,12 @@ public class SwimLane : MonoBehaviour {
     void Start()
     {
         name = SwimLaneModel.Name;
+
+        var text = GetComponentInChildren<Text>();
+        if (text != null)
+        {
+            text.text = SwimLaneModel.Name;
+        }
     }
 
     public void AfterPositionUpdate()
