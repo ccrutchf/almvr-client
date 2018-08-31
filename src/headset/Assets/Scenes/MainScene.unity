@@ -240,54 +240,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1001 &108495179
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4196476676672866, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-      propertyPath: m_RootOrder
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114201143866730364, guid: 4ea33ae36cc416741bcbdf84c973ff66,
-        type: 2}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 2d89a5f92f03449f2bd6c28c914115fc,
-        type: 3}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!1 &146583306 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1400461039152700, guid: c7821bc923171f24094e69062402d005,
@@ -943,7 +895,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf1ed70c383d6e3409702e3847bc20c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardPrefab: {fileID: 1176178219055488, guid: 4ea33ae36cc416741bcbdf84c973ff66, type: 2}
   SwimLanePrefab: {fileID: 1222438717125780, guid: 74f087f0396048a45881108fa4d7c6da,
     type: 2}
   Island: {fileID: 72269694}

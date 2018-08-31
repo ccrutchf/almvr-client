@@ -13,17 +13,7 @@ public class Card : MonoBehaviour {
     private CardModel cardModel;
 
 	// Use this for initialization
-	void Start ()
-    {
-        transform.position = new Vector3(Random.value * 10.0f - 5, 50 + Random.value * 10.0f, Random.value * 10.0f - 5);
-    }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public async Task InitializeAsync()
+	async void Start ()
     {
         cardModel = await CardClient.GetCardAsync(ID);
 
@@ -35,4 +25,9 @@ public class Card : MonoBehaviour {
             text.text = cardModel.Name;
         }
     }
+	
+	// Update is called once per frame
+	void Update () {
+		
+	}
 }
