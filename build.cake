@@ -46,6 +46,7 @@ Task("Build-Client")
 
 Task("Build-Unity")
 	.IsDependentOn("Build-Client")
+	.WithCriteria(() => false) // We cannot currently build a Unity project on AppVeyor due to a Unity bug.
 	.Does(() =>
 {
 	var unityEditorLocation = EnvironmentVariable("UNITY_EDITOR_LOCATION") ?? @"C:\Program Files\Unity\Editor\Unity.exe";
