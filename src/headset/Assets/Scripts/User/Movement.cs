@@ -6,6 +6,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour {
 
     private const string TELEPORT_CAPABLE_TAG = "TeleportReceiver";
+    private const string SWIM_LANE_TAG = "SwimLane";
 
     private Vector2 prevTouchPos = Vector2.zero;
     private Vector2 swipeDelta = Vector2.zero;
@@ -20,6 +21,7 @@ public class Movement : MonoBehaviour {
     public GvrLaserPointer GvrLaserPointer;
 
     public GameObject NetworkManagerObject;
+    public BoardManager BoardManager;
 
     // Use this for initialization
     void Start()
@@ -34,8 +36,6 @@ public class Movement : MonoBehaviour {
 
         var device = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
 
-        //var secondaryThumbstick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
-
         Teleport(device);
         Rotate(device);
     }
@@ -44,7 +44,9 @@ public class Movement : MonoBehaviour {
     {
         if (device.GetButtonUp(GvrControllerButton.TouchPadButton) &&
             GvrLaserPointer.CurrentRaycastResult.gameObject != null &&
-            GvrLaserPointer.CurrentRaycastResult.gameObject.tag == TELEPORT_CAPABLE_TAG)
+            (GvrLaserPointer.CurrentRaycastResult.gameObject.tag == TELEPORT_CAPABLE_TAG || 
+            (GvrLaserPointer.CurrentRaycastResult.gameObject.tag == SWIM_LANE_TAG &&
+            !BoardManager.AnyCardsSelected())))
         {
             transform.position = GvrLaserPointer.CurrentRaycastResult.worldPosition + new Vector3(0, 1.5f, 0);
 

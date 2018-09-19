@@ -9,6 +9,9 @@ namespace AlmVR.Client.Core
 {
     public interface ICardClient : IClient
     {
+        event EventHandler<CardChangedEventArgs> CardChanged;
+
         Task<CardModel> GetCardAsync(string id);
+        Task MoveCardAsync(CardModel card, SwimLaneModel targetSwimLane);
     }
 }

@@ -13,8 +13,8 @@ namespace AlmVR.Client.Providers.SignalR
     {
         public event EventHandler ThingHappenedToMe;
 
-        public BoardClientSignalRProvider()
-            : base("board") { }
+        public BoardClientSignalRProvider(Action<string> log)
+            : base("board", log) { }
 
         protected override void OnConnectionCreated()
         {

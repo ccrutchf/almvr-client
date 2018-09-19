@@ -13,18 +13,21 @@ namespace AlmVR.Client
     {
         private static IContainer container;
 
-        static ClientFactory()
-        {
-            var builder = new ContainerBuilder();
-
-            builder.RegisterType<BoardClientSignalRProvider>().As<IBoardClient>();
-            builder.RegisterType<CardClientSignalRProvider>().As<ICardClient>();
-
-            container = builder.Build();
-        }
+        public static Action<string> Log { get; set; }
 
         public static T GetInstance<T>()
         {
+            if (container == null)
+            {
+                var builder = new ContainerBuilder();
+
+                builder.RegisterType<BoardClientSignalRProvider>().As<IBoardClient>();
+                builder.RegisterType<CardClientSignalRProvider>().As<ICardClient>();
+                builder.RegisterInstance(Log).As<Action<string>>();
+
+                container = builder.Build();
+            }
+
             return container.Resolve<T>();
         }
     }

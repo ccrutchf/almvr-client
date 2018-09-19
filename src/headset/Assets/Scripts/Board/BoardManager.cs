@@ -17,18 +17,28 @@ public class BoardManager : MonoBehaviour {
     private IBoardClient boardClient;
     private ICardClient cardClient;
 
+    private List<SwimLane> swimLanes = new List<SwimLane>();
+
     public string HostName;
     public int Port;
     public GvrLaserPointer GvrLaserPointer;
+    public GameObject Player;
 
     // Use this for initialization
     async void Start () {
+        ClientFactory.Log = Debug.Log;
+
         boardClient = ClientFactory.GetInstance<IBoardClient>();
         cardClient = ClientFactory.GetInstance<ICardClient>();
 
         await boardClient.ConnectAsync(HostName, Port);
         await cardClient.ConnectAsync(HostName, Port);
 
+        await GenerateBoardAsync();
+    }
+
+    private async Task GenerateBoardAsync()
+    {
         var board = await boardClient.GetBoardAsync();
 
         List<Task> swimLaneInits = new List<Task>();
@@ -42,6 +52,12 @@ public class BoardManager : MonoBehaviour {
 
             swimLane.SwimLaneModel = lane;
             swimLane.CardClient = cardClient;
+            swimLane.GvrLaserPointer = GvrLaserPointer;
+            swimLane.Player = Player;
+            swimLane.BoardManager = this;
+            swimLane.ChildCardChanged += SwimLane_ChildCardChanged;
+
+            swimLanes.Add(swimLane);
 
             var x = transform.position.x + RADIUS * Mathf.Cos(degrees * (float)counter);
             var z = transform.position.z + RADIUS * Mathf.Sin(degrees * (float)counter);
@@ -59,27 +75,31 @@ public class BoardManager : MonoBehaviour {
             counter++;
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
-        GvrPointerInputModule.Pointer = GvrLaserPointer;
 
-        //var device = GvrControllerInput.GetDevice(GvrControllerHand.Dominant);
+    private async void SwimLane_ChildCardChanged(object sender, System.EventArgs e)
+    {
+        ResetBoard();
 
-        foreach (var go in GameObject.FindGameObjectsWithTag(CARD_TAG))
-        {
-            go.transform.GetChild(0).localScale = Vector3.zero;
-        }
+        await GenerateBoardAsync();
+    }
 
-        if (GvrLaserPointer.CurrentRaycastResult.gameObject != null &&
-            GvrLaserPointer.CurrentRaycastResult.gameObject.tag == CARD_TAG)
-        {
-            GvrLaserPointer.CurrentRaycastResult.gameObject.transform.GetChild(0).localScale = Vector3.one;
-        }
+    // Update is called once per frame
+    void Update () {
+        
     }
 
     private void OnDestroy() {
         boardClient.Dispose();
         cardClient.Dispose();
+    }
+
+    public bool AnyCardsSelected() => swimLanes.Any(x => x.AnyCardSelected());
+
+    private void ResetBoard()
+    {
+        foreach (var lane in swimLanes)
+        {
+            lane.ResetSwimLane();
+        }
     }
 }

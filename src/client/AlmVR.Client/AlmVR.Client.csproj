@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlmVR.Common.Models" Version="1.0.9-ga252fefe34" />
+    <PackageReference Include="AlmVR.Common.Models" Version="1.0.13-gdb9b60f24e" />
     <PackageReference Include="Autofac" Version="4.8.1" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.23" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +21,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(TargetDir)*&quot; ..\..\headset\Assets\Libraries\ /y" />
+    <Exec Command="xcopy &quot;$(TargetDir)*&quot; &quot;..\..\headset\Assets\Libraries\&quot; /y" />
   </Target>
 
 </Project>

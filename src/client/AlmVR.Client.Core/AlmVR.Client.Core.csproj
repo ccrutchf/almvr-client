@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AlmVR.Common.Models" Version="1.0.9-ga252fefe34" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.1.23" />
+    <PackageReference Include="AlmVR.Common.Models" Version="1.0.13-gdb9b60f24e" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

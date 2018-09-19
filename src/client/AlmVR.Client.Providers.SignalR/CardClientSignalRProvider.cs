@@ -11,12 +11,27 @@ namespace AlmVR.Client.Providers.SignalR
 {
     public class CardClientSignalRProvider : ClientBase, ICardClient
     {
-        public CardClientSignalRProvider()
-            : base("card") { }
+        public CardClientSignalRProvider(Action<string> log)
+            : base("card", log) { }
+
+        public event EventHandler<CardChangedEventArgs> CardChanged;
 
         public Task<CardModel> GetCardAsync(string id)
         {
             return Connection.InvokeAsync<CardModel>("GetCard", id);
+        }
+
+        public Task MoveCardAsync(CardModel card, SwimLaneModel targetSwimLane)
+        {
+            return Connection.InvokeAsync("MoveCard", card, targetSwimLane);
+        }
+
+        protected override void OnConnectionCreated()
+        {
+            Connection.On<CardModel>("CardChanged", card =>
+            {
+                CardChanged?.Invoke(this, new CardChangedEventArgs(card));
+            });
         }
     }
 }
