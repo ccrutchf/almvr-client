@@ -3,34 +3,36 @@
 
 A virtual reality (VR) application life cycle (ALM) management utility written for the Google Daydream and targeting Trello.
 
+## Demo
+[![AlmVR Demo](http://img.youtube.com/vi/dSCv77CD3rA/0.jpg)](http://www.youtube.com/watch?v=dSCv77CD3rA)
+
 ## What?
-This repository contains the client component of AlmVR.  The client connects to the server and other clients to expose a shared scrum experience.
+This repository contains the client component of AlmVR. The client connects to the server and other clients to expose a shared scrum experience.
 
 ## How?
+
 The client is broken into two different sections, the client libraries and the app that runs on Google Daydream compatible devices.
-
-The client libraries are written in `C#` and are `.NET Standard` libraries which must be compiled before launching Unity for the first time.  The client libraries use dependency injection using `Autofac` to provide implementations of core providers which use `SignalR` to communicate in real time to the server.
-
-The app that runs on Google Daydream compatible devices is written using Unity and depends on the client libraries.
+The client libraries are written in `C#` and are `.NET Standard` libraries which must be compiled before launching `Unity` for the first time. The client libraries use dependency injection using `Autofac` to provide implementations of core providers which use `SignalR` to communicate in real time to the server.
+The app that runs on Google Daydream compatible devices is written using `Unity` and depends on the client libraries.
 
 ### Communication with the server
-The client uses web sockets implemented by `SignalR` for real time communication with the server.  This allows the server to be able to push updates to the client without the client polling the server for updates, thus increasing efficiency.
+The client uses web sockets implemented by `SignalR` for real time communication with the server. This allows the server to be able to push updates to the client without the client polling the server for updates, thus increasing efficiency.
+
+### Communication with the other clients using Photon
+The clients use `Photon` to communicate with one another to synchronize object states between the headsets (ie position and rotation of other players). 
 
 ### Builds
-The server (as well as the remainder of AlmVR) is built using Cake Build run in AppVeyor.  The build executes the following on every commit that is pushed to GitHub:
+The client (as well as the remainder of AlmVR) is built using `Cake Build` run in `AppVeyor`. The build executes the following on every commit that is pushed to GitHub:
 1. A clean of all of the build files.
-2. Build the client libraries using the dotnet CLI. (Note: the version is generated implicitly using [Nerdbank.GitVersioning](https://github.com/AArnott/Nerdbank.GitVersioning).)
-3. Build the Unity project using Unity's command line interface. (Note: this is disabled due to a bug discussed later)
+2. Build the client libraries using the `dotnet` CLI. (Note: the version is generated implicitly using  [Nerdbank.GitVersioning](https://github.com/AArnott/Nerdbank.GitVersioning).)
+3. Build the `Unity` project using Unity's command line interface. (Note: this is disabled due to a bug discussed later)
 4. Package the result of step 3. (Note: this is disabled due to the bug noted in step 3.)
 
 ## Why?
-The choice to have a separate set of client libraries from the application started as an artifact of the way that Unity handles `.NET Standard` libraries and NuGet packages.
-
-Since Unity originally did not have support for `.NET Standard 2.0` libraries, which is how `SignalR` is supplied, the choice was made to hide the `.NET Standard` libraries behind a `.NET Framework 4.6.1` library, since it implements `.NET Standard 2.0`.
-
-By pulling the client libraries out into their own project, we also allowed Visual Studio to manage the necessary NuGet packages for the project.  This was necessary because `SignalR` is published as a NuGet package.
-
-We choose to implement AlmVR's client using Unity because of its support for many different kinds of headsets and its support for the large number of `.NET` libraries.  (See struggles for more on headset support and `.NET` library issues)
+The choice to have a separate set of client libraries from the application started as an artifact of the way that Unity handles `.NET Standard` libraries and `NuGet` packages.
+Since `Unity` originally did not have support for `.NET Standard 2.0` libraries, which is how `SignalR` is distributed, the choice was made to hide the `.NET Standard` libraries behind a `.NET Framework 4.6.1` library, since it implements `.NET Standard 2.0`.
+By pulling the client libraries out into their own project, we also allowed Visual Studio to manage the necessary `NuGet` packages for the project. This was necessary because `SignalR` is distributed as a `NuGet` package.
+We choose to implement AlmVR's client using `Unity` because of its support for many different kinds of headsets and its support for the large number of `.NET` libraries. (See struggles for more on headset support and `.NET` library issues)
 
 ## Struggles
 * Cross-platform - originally we had intended to support more than just the Google Daydream.  We attempted to leverage VRTK and found difficulties implementing necessary features.  As this project is largely a proof-of-concept, we decided to drop support for the following headset to focus on features:
