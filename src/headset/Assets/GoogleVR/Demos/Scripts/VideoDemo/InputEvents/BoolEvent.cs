@@ -1,3 +1,5 @@
+//-----------------------------------------------------------------------
+// <copyright file="BoolEvent.cs" company="Google Inc.">
 // Copyright 2016 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,24 +13,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+// </copyright>
+//-----------------------------------------------------------------------
 
-using UnityEngine;
-using System.Collections;
+namespace GoogleVR.VideoDemo
+{
+    using System;
+    using UnityEngine;
+    using UnityEngine.Events;
 
-
-[System.Obsolete("Replaced by GvrPointerInputModule.")]
-[AddComponentMenu("")]
-public class GvrPointerManager : MonoBehaviour {
-  public static GvrBasePointer Pointer {
-    get {
-      return GvrPointerInputModule.Pointer as GvrBasePointer;
+    [Serializable]
+    public class BoolEvent : UnityEvent<bool>
+    {
     }
-    set {
-      GvrPointerInputModule.Pointer = value;
-    }
-  }
-
-  public static void OnPointerCreated(GvrBasePointer createdPointer) {
-    GvrPointerInputModule.OnPointerCreated(createdPointer);
-  }
 }

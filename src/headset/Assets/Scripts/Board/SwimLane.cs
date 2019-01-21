@@ -54,6 +54,11 @@ public class SwimLane : MonoBehaviour {
 
     void Start()
     {
+        if (SwimLaneModel == null)
+        {
+            return;
+        }
+
         name = SwimLaneModel.Name;
 
         var text = GetComponentInChildren<Text>();
