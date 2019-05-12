@@ -31,8 +31,7 @@ public class BoardManager : MonoBehaviour {
         boardClient = ClientFactory.GetInstance<IBoardClient>();
         cardClient = ClientFactory.GetInstance<ICardClient>();
 
-        await boardClient.ConnectAsync(HostName, Port);
-        await cardClient.ConnectAsync(HostName, Port);
+        await Task.WhenAll(boardClient.ConnectAsync(HostName, Port), cardClient.ConnectAsync(HostName, Port));
 
         await GenerateBoardAsync();
     }

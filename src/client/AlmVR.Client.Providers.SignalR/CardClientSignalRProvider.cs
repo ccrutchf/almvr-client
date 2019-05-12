@@ -16,15 +16,11 @@ namespace AlmVR.Client.Providers.SignalR
 
         public event EventHandler<CardChangedEventArgs> CardChanged;
 
-        public Task<CardModel> GetCardAsync(string id)
-        {
-            return Connection.InvokeAsync<CardModel>("GetCard", id);
-        }
+        public Task<CardModel> GetCardAsync(string id) =>
+            Connection.InvokeAsync<CardModel>("GetCard", id);
 
-        public Task MoveCardAsync(CardModel card, SwimLaneModel targetSwimLane)
-        {
-            return Connection.InvokeAsync("MoveCard", card, targetSwimLane);
-        }
+        public Task MoveCardAsync(CardModel card, SwimLaneModel targetSwimLane) =>
+            Connection.InvokeAsync("MoveCard", card, targetSwimLane);
 
         protected override void OnConnectionCreated()
         {

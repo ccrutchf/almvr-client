@@ -9,8 +9,6 @@ namespace AlmVR.Client.Core
 {
     public interface IBoardClient : IClient
     {
-        event EventHandler ThingHappenedToMe;
-
         Task<BoardModel> GetBoardAsync();
     }
 }

@@ -13,7 +13,7 @@ namespace AlmVR.Client
     {
         private static IContainer container;
 
-        public static Action<string> Log { get; set; }
+        public static Action<string> Log { get; set; } = DevNull;
 
         public static T GetInstance<T>()
         {
@@ -21,14 +21,18 @@ namespace AlmVR.Client
             {
                 var builder = new ContainerBuilder();
 
-                builder.RegisterType<BoardClientSignalRProvider>().As<IBoardClient>();
-                builder.RegisterType<CardClientSignalRProvider>().As<ICardClient>();
+                builder.RegisterType<BoardClientSignalRProvider>().As<IBoardClient>().InstancePerLifetimeScope();
+                builder.RegisterType<CardClientSignalRProvider>().As<ICardClient>().InstancePerLifetimeScope();
                 builder.RegisterInstance(Log).As<Action<string>>();
 
                 container = builder.Build();
             }
 
             return container.Resolve<T>();
+        }
+
+        private static void DevNull(string log)
+        {
         }
     }
 }
